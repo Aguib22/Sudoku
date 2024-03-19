@@ -175,7 +175,13 @@ i | 0 8 0 | 0 0 2 | 7 0 9 |
 2. Interactif
 >>> 
 
+****************** la premiere mise a jours***************************
 
+    mise_a_jours
+    dans ce commit j'ai renommer toutes les calasse ,
+    metode,variable en englais.
+    j'ai ensuite fais une petite organisation en creant des sous
+    dossiers pour stocker les fichier contenant les chaine de sudoku
 
 
 
