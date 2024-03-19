@@ -12,12 +12,12 @@ class Sudoku:
 
     """
 
-    def affiche_grille(grille):
+    def shwo_grid(grid):
         #cette fonction permet juste d'affiche une grille
 
         indice_alpha = "abcdefghi"
         print("    a b c   d e f   g h i")
-        for indice_line, line in enumerate(grille):
+        for indice_line, line in enumerate(grid):
             if indice_line % 3 == 0:
                 print(" ", ('+' + '-' * 7) * 3 + '+')
             print(indice_alpha[indice_line], end=' ')
@@ -30,7 +30,7 @@ class Sudoku:
             print('|')
         print(" ", ('+' + '-' * 7) * 3 + '+')
 
-    def generer_grille(chaine):
+    def generate_grid(chaine):
         """
         description:
             cette fonction a pour role de generer une grille de sudoku
@@ -41,46 +41,46 @@ class Sudoku:
         """
         if len(chaine) != 81:
             return False, None
-        grille_sudoku = []
-        ligne = []
+        grid_sudoku = []
+        line = []
         for i, elem in enumerate(chaine):
-            ligne.append(int(elem))
+            line.append(int(elem))
 
             if (i + 1) % 9 == 0:
-                grille_sudoku.append(ligne)
-                ligne = []
-        return True, grille_sudoku
+                grid_sudoku.append(line)
+                line = []
+        return True, grid_sudoku
 
-    def remplire_case_vide(grille, grill_orig, cord, val):
+    def fill_empty_box(grid, grid_orig, cord, val):
         """
         description:
             la fonction qui permet de remplire les cases de la grille par l'utilisateur
         parms:
-            grille: la grille que l'utilisateur doit remplir
-            grill_orig: c'est la copie de la grille qui permettra de verifie si une case doit etre modifiée ou pas
+            grid: la grille que l'utilisateur doit remplir
+            grid_orig: c'est la copie de la grille qui permettra de verifie si une case doit etre modifiée ou pas
             cord: prend les cordonnées de la case à remplire
             val: prend la valeurs de la case
 
 
         """
         if val not in range(0, 10):
-            return False, grille
+            return False, grid
 
-        col = ascii_lowercase.index(cord[1])
-        ligne = ascii_lowercase.index(cord[0])
-        if ligne > 8:
-            return False, grille
+        row = ascii_lowercase.index(cord[1])
+        line = ascii_lowercase.index(cord[0])
+        if line > 8:
+            return False, grid
         disp = False
-        if grill_orig[ligne][col] == 0:
+        if grid_orig[line][row] == 0:
             disp = True
 
         if not disp:
-            return False, grille
+            return False, grid
 
-        grille[ligne][col] = val
-        return True, grille
+        grid[line][row] = val
+        return True, grid
 
-    def saisie_user(self):
+    def user_input(self):
         """
         description:
             cette fonction permet de prendre la saisie de l'utilisateur
@@ -90,117 +90,117 @@ class Sudoku:
 
         """
         msg_err = ""
-        verif_saisie = False
-        while not verif_saisie:
-            verif_saisie = True
-            saisie_cordonnee = input("donner les cordonnées de la case à modifier sous le format [a b]:")
+        check_input = False
+        while not check_input:
+            check_input = True
+            input_coordinate = input("donner les cordonnées de la case à modifier sous le format [a b] ou taper 'q' pour sortir:")
 
-            if saisie_cordonnee.lower() == 'q':
+            if input_coordinate.lower() == 'q':
 
                 return None, None  # Retourne None pour indiquer à l'appelant que l'utilisateur veut quitter
 
-            if len(saisie_cordonnee) != 3:
-                verif_saisie = False
+            if len(input_coordinate) != 3:
+                check_input = False
                 msg_err = "donner le bon format de saisi"
             else:
-                line_cord = saisie_cordonnee[0]
+                line_cord = input_coordinate[0]
                 indice_possible = 'abcdefghi'
                 if line_cord not in indice_possible:
-                    verif_saisie = False
+                    check_input = False
                     msg_err = f"les cordonnés doivent etre dans {indice_possible}"
                 else:
-                    col_cord = saisie_cordonnee[2]
-                    if col_cord not in indice_possible:
-                        verif_saisie = False
+                    row_cord = input_coordinate[2]
+                    if row_cord not in indice_possible:
+                        check_input = False
                         msg_err = f"les cordonnés doivent etre dans {indice_possible}"
 
-            if verif_saisie:
-                cordonnee = [line_cord, col_cord]
+            if check_input:
+                cordonnee = [line_cord, row_cord]
             else:
                 print(msg_err)
 
         # saisie de la valeur
-        verif_saisie = False
+        check_input = False
         msg_err = ""
-        while not verif_saisie:
-            verif_saisie = True
-            valeur_saisie = (input("donner la valeur de la cellule:"))
+        while not check_input:
+            check_input = True
+            input_value = (input("donner la valeur de la cellule:"))
 
-            if valeur_saisie not in "123456789":
-                verif_saisie = False
+            if input_value not in "123456789":
+                check_input = False
                 msg_err = "la valeur doit etre comprise entre 0 et 9"
 
-            if verif_saisie:
-                valeur = int(valeur_saisie)
+            if check_input:
+                value = int(input_value)
             else:
                 print(msg_err)
 
-        return cordonnee, valeur
+        return cordonnee, value
 
 
-    def fichier(niveau):
+    def loading_file(level):
         """
         description:
             cette fonction est chargée de faire la manipulation des fichiers pour choisir une chaine
             de grille en fonction du niveau de jeu choisi par l'utilisateur
         params:
-            niveau: le niveau de jeu choisi par le user
+            level: le niveau de jeu choisi par le user
         retour:
             un bollen qui indique si la chaine est bein chargée ou pas
             liste_sudoku: la chaine de sudoku en frome de liste
             liste_sudoku_resolu: la resolution de la chaine liste_sudoku
         """
-        chemin_fichier = {
-            'facile': "facile.txt",
-            'moyen': 'moyen.txt',
-            'difficile': 'difficile.txt'
+        file_path = {
+            'facile': "file_of_sudoku/facile.txt",
+            'moyen': 'file_of_sudoku/moyen.txt',
+            'difficile': 'file_of_sudoku/difficile.txt'
         }
-        chemin_fichier_resolu = {
-            'facile': 'R_facile.txt',
-            'moyen': 'R_moyen.txt',
-            'difficile': 'R_difficile.txt'
+        resolution_fil_path = {
+            'facile': 'file_sudoku_resolved/R_facile.txt',
+            'moyen': 'file_sudoku_resolved/R_moyen.txt',
+            'difficile': 'file_sudoku_resolved/R_difficile.txt'
         }
-        if niveau not in chemin_fichier:
+        if level not in file_path:
             return False, None,None
-        file = open(chemin_fichier[niveau], "r")
-        contenu = file.read()
+        file = open(file_path[level], "r")
+        content = file.read()
         file.close()
-        fic = open(chemin_fichier_resolu[niveau], "r")
-        contenu_resolu = fic.read()
+        fic = open(resolution_fil_path[level], "r")
+        content_resolved = fic.read()
         fic.close()
 
-        liste_sudoku = contenu.split('\n')
-        liste_sudoku_resolu = contenu_resolu.split('\n')
-        return True, liste_sudoku, liste_sudoku_resolu
+        list_sudoku = content.split('\n')
+        list_resolved_sudoku = content_resolved.split('\n')
+        return True, list_sudoku, list_resolved_sudoku
 
-    def choix_chaine_sudoku(niveau):
+    def choice_of_sudoku(level):
         """
         description:
             cette fonction a pour role de choisir de façon aleatoire la chaine de sudoku
         params:
-            niveau: le niveau de jeu choisi par le user
+            level: le niveau de jeu choisi par le user
         retours:
             un booleen qui retourne l'état du choisi
-            contenu[indice_grille]: la grille
-            solution[indice_grille]:la solution de la grille
+            content[indice_grid]: la grille
+            resolve[indice_grid]:la solution de la grille
 
         """
 
-        exist, contenu, solution = Sudoku.fichier(niveau)
+        exist, content, resolve = Sudoku.loading_file(level)
 
         if not exist:
             return False, None,None
 
-        indice_grille = randint(0, len(contenu) - 1)
+        indice_grid = randint(0, len(content) - 1)
 
-        return True, contenu[indice_grille], solution[indice_grille]
+        return True, content[indice_grid], resolve[indice_grid]
 
-    def fin_jeu(grille):
+    def fin_jeu(grid):
         #cette fonction retourne l'état du jeu "terminé ou pas"
         zero=0
-        for line in grille:
-            for elme in line:
-                if elme == 0:
+        for line in grid:
+            for item in line:
+                if item == 0:
                   zero +=1
         if zero > 0:
             return True
@@ -208,12 +208,12 @@ class Sudoku:
         else:
             return False
 
-    def comparaison(grille_user,g_resolue):
+    def comparaison(user_grid,g_resolve):
         """
         celle ci compare la grille apres que l'utilisateur aies fini de remplire et
         la solution de grille  pour verifier si le user a gagner ou perdu en respectant le principe du sudoku
         """
 
-        return g_resolue == grille_user
+        return g_resolve == user_grid
 
 
